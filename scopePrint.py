@@ -32,8 +32,10 @@ def mountUSB(isFake):
     """
 
     print("Mounting USB side!", flush=True)
+    
+    sts = "(fake)"
     if (not isFake):
-   sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
+        sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
     print(sts)
 
 def unmountUSB(isFake):
@@ -42,7 +44,10 @@ def unmountUSB(isFake):
     """
     
     print("Unmounting USB side.", flush=True)
-    sts = subprocess.call("sudo modprobe g_mass_storage -r", shell=True)
+    sts = "(fake)"
+    if (not isFake):
+        sts = subprocess.call("sudo modprobe g_mass_storage -r", shell=True)
+    
     print(sts)
 
 def mountLocal(isFake):
@@ -51,8 +56,10 @@ def mountLocal(isFake):
     """
     
     print("Mounting local side.", flush=True)
-#    sts = subprocess.call("sudo mount -a", shell=True)
-    sts = subprocess.call("sudo mount -t vfat /piusb.bin /mnt/usb_share -r")
+    sts = "(fake)"
+    if (not isFake):
+        sts = subprocess.call("sudo mount -a", shell=True)
+  #  sts = subprocess.call("sudo mount -t vfat /piusb.bin /mnt/usb_share -r")
     print(sts)    
 
 
@@ -62,7 +69,9 @@ def unmountLocal(isFake):
         Unmount the mirror of the shared memory on the local system.
     """
     print("Unmounting local side.", flush=True)
-    sts = subprocess.call("umount /mnt/usb_share", shell=True)
+    sts = "(fake)"
+    if (not isFake):
+        sts = subprocess.call("umount /mnt/usb_share", shell=True)
     print(sts)
  
 def main():
