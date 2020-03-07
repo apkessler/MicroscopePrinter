@@ -14,6 +14,9 @@ def getFileList(path):
     return dict ([(f, None) for f in os.listdir (path)])
 
 def printPicture(fileName):
+    """
+        Send the given filename to the printer to print.
+    """
     print("Printing %s..." % fileName, flush=True)
     sts = subprocess.run("lp %s" % fileName, shell=True, capture_output=True)
     #sts = subprocess.run(["pwd"], shell=True, capture_output=True)    
@@ -23,26 +26,41 @@ def printPicture(fileName):
     #TODO: should wait for printer to be done
     
 
-def mountUSB():
-    #TODO mount USB
+def mountUSB(isFake):
+    """ 
+        Mount the USB drive (virtually plug in)
+    """
+
     print("Mounting USB side!", flush=True)
-    sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
+    if (not isFake):
+   sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
     print(sts)
 
-def unmountUSB():
-    #TODO acutally unmount USB
+def unmountUSB(isFake):
+    """
+        Unmount the USB drive (virtually unplug)
+    """
+    
     print("Unmounting USB side.", flush=True)
     sts = subprocess.call("sudo modprobe g_mass_storage -r", shell=True)
     print(sts)
 
-def mountLocal():
-    #TODO actually mount local side
+def mountLocal(isFake):
+    """
+        Mount the mirror of the shared memory on the local file system.
+    """
+    
     print("Mounting local side.", flush=True)
-    sts = subprocess.call("sudo mount -a", shell=True)
+#    sts = subprocess.call("sudo mount -a", shell=True)
+    sts = subprocess.call("sudo mount -t vfat /piusb.bin /mnt/usb_share -r")
     print(sts)    
 
-def unmountLocal():
-    #TODO actually unmount local side
+
+
+def unmountLocal(isFake):
+    """ 
+        Unmount the mirror of the shared memory on the local system.
+    """
     print("Unmounting local side.", flush=True)
     sts = subprocess.call("umount /mnt/usb_share", shell=True)
     print(sts)
@@ -53,10 +71,10 @@ def main():
         raise Exception("Must be using Python 3!")
 
     parser = argparse.ArgumentParser(description='Monitor for new files')
-
+    parser.add_argument('-p','--pathToWatch', default='/mnt/usb_share/EVOS/', description="Path to watch for new files")
+    parser.add_argument('-f','--fake', type=boolean, default=False, action='store_true', description="Do not make OS calls.")
     args = parser.parse_args()
 
-    pathToWatch = "/mnt/usb_share/EVOS/"
 
     print("Running! Press Ctrl+c to quit at any time.", flush=True)
 
@@ -83,27 +101,27 @@ def main():
     mountUSB()
 
 
-    filesBefore = getFileList(pathToWatch)
+    filesBefore = getFileList(args.pathToWatch)
     try:
         while 1:
             print("\nWaking up!", flush=True)
-            mountLocal()
-            filesAfter = getFileList(pathToWatch)
+            mountLocal(args.fake)
+            filesAfter = getFileList(args.pathToWatch)
 
             addedFiles = [f for f in filesAfter if not f in filesBefore]
             print("Added files: " + ", ".join(addedFiles), flush=True)
 
             #TODO: sort by modified date
             if (len(addedFiles) >= 1):
-                unmountUSB()
+                unmountUSB(args.fake)
                 print("Going to try to print %s!" % addedFiles[0])
                 printPicture(addedFiles[0])
 
-                unmountLocal() #unmount local
-                mountUSB() #mount USB
+                unmountLocal(args.fake) #unmount local
+                mountUSB(args.fake) #mount USB
             else:
                 print("No new pictures.", flush=True)
-                unmountLocal() #unmount local
+                unmountLocal(args.fake) #unmount local
 
             filesBefore = filesAfter
 
