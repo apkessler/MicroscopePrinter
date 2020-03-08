@@ -18,17 +18,23 @@ def printPicture(fileName):
         Send the given filename to the printer to print.
     """
     print("Printing %s..." % fileName, flush=True)
-    sts = subprocess.run(["lp", fileName], capture_output=True)#, check=True)
-    #sts = subprocess.run(["pwd"], shell=True, capture_output=True)    
+    sts = subprocess.run(["lp", fileName], capture_output=True)
     if (sts.returncode == 0):
-        print(sts.stdout, flush=True)
+        #If successful, lp will print b'request id is <job-id> (1 file(s))\n'
+        jobId = (sts.stdout.decode('utf-8').split())[3]
+        print("JobId = %s" % jobId, flush=True)
     else:
-        print("lp returned error %d!: %s\n" % (sts.returncode, sts.stderr), flush=True)
+        print("lp error %d!: '%s'" % (sts.returncode, sts.stderr.decode('utf-8')), flush=True)
     
-    #print("[%d]" % sts.returncode + str(sts.stdout), flush=True)
-    time.sleep(1)
-    print("...done!", flush=True)
-    #TODO: should wait for printer to be done
+    #Now wait for job to complete
+    status = ''
+    while (status != 'idle.'): #TODO: This is a bit hacky, but it works.
+        time.sleep(2)
+        sts = subprocess.run(['lpstat','-p'], capture_output=True)
+        status = (sts.stdout.decode('utf-8').split())[3]
+        print("\tStatus = "+ status, flush=True)
+ 
+    print("\tDone printing!", flush=True)
     
 
 def mountUSB(isFake):
@@ -41,7 +47,7 @@ def mountUSB(isFake):
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
-    print(sts)
+    print("\t"+sts)
 
 def unmountUSB(isFake):
     """
