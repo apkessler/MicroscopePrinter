@@ -18,9 +18,14 @@ def printPicture(fileName):
         Send the given filename to the printer to print.
     """
     print("Printing %s..." % fileName, flush=True)
-    sts = subprocess.run("lp %s" % fileName, shell=True, capture_output=True)
+    sts = subprocess.run(["lp", fileName], capture_output=True)#, check=True)
     #sts = subprocess.run(["pwd"], shell=True, capture_output=True)    
-    print(sts.stdout, flush=True)
+    if (sts.returncode == 0):
+        print(sts.stdout, flush=True)
+    else:
+        print("lp returned error %d!: %s\n" % (sts.returncode, sts.stderr), flush=True)
+    
+    #print("[%d]" % sts.returncode + str(sts.stdout), flush=True)
     time.sleep(1)
     print("...done!", flush=True)
     #TODO: should wait for printer to be done
@@ -31,7 +36,7 @@ def mountUSB(isFake):
         Mount the USB drive (virtually plug in)
     """
 
-    print("Mounting USB side!", flush=True)
+    print("\tMounting USB side!", flush=True)
     
     sts = "(fake)"
     if (not isFake):
@@ -43,24 +48,24 @@ def unmountUSB(isFake):
         Unmount the USB drive (virtually unplug)
     """
     
-    print("Unmounting USB side.", flush=True)
+    print("\tUnmounting USB side.", flush=True)
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("sudo modprobe g_mass_storage -r", shell=True)
     
-    print(sts)
+    print("\t"+sts)
 
 def mountLocal(isFake):
     """
         Mount the mirror of the shared memory on the local file system.
     """
     
-    print("Mounting local side.", flush=True)
+    print("\tMounting local side.", flush=True)
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("sudo mount -a", shell=True)
   #  sts = subprocess.call("sudo mount -t vfat /piusb.bin /mnt/usb_share -r")
-    print(sts)    
+    print("\t"+sts)    
 
 
 
@@ -68,11 +73,11 @@ def unmountLocal(isFake):
     """ 
         Unmount the mirror of the shared memory on the local system.
     """
-    print("Unmounting local side.", flush=True)
+    print("\tUnmounting local side.", flush=True)
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("umount /mnt/usb_share", shell=True)
-    print(sts)
+    print("\t"+sts)
  
 def main():
 
@@ -80,8 +85,9 @@ def main():
         raise Exception("Must be using Python 3!")
 
     parser = argparse.ArgumentParser(description='Monitor for new files')
-    parser.add_argument('-p','--pathToWatch', default='/mnt/usb_share/EVOS/', description="Path to watch for new files")
-    parser.add_argument('-f','--fake', type=boolean, default=False, action='store_true', description="Do not make OS calls.")
+    parser.add_argument('-p','--pathToWatch', default='/mnt/usb_share/EVOS/', help="Path to watch for new files")
+    parser.add_argument('-f','--fake', default=False, action='store_true', help="Do not make OS calls.")
+    parser.add_argument('-t','--test', default=None, help="Test printing given file")
     args = parser.parse_args()
 
 
@@ -98,6 +104,10 @@ def main():
             print("Found %s" % prntr, flush=True)
         #TODO: explicitly select first?
 
+    if (args.test):
+        printPicture(args.test)
+        sys.exit()
+
     #For now, just move forward with default
     print("Clearing print queue...", flush=True)
     subprocess.call("cancel -a", shell=True)    
@@ -107,7 +117,7 @@ def main():
     #TODO: Mount locally, and clear out EVOS folder, then unmount
 
     #Now mount the USB side of the system so flash drive appears to scope
-    mountUSB()
+    mountUSB(args.fake)
 
 
     filesBefore = getFileList(args.pathToWatch)
@@ -118,18 +128,18 @@ def main():
             filesAfter = getFileList(args.pathToWatch)
 
             addedFiles = [f for f in filesAfter if not f in filesBefore]
-            print("Added files: " + ", ".join(addedFiles), flush=True)
+            #print("Added files: " + ", ".join(addedFiles), flush=True)
 
             #TODO: sort by modified date
             if (len(addedFiles) >= 1):
                 unmountUSB(args.fake)
-                print("Going to try to print %s!" % addedFiles[0])
-                printPicture(addedFiles[0])
+                print("\tGoing to try to print %s!" % addedFiles[0])
+                printPicture(args.pathToWatch + addedFiles[0])
 
                 unmountLocal(args.fake) #unmount local
                 mountUSB(args.fake) #mount USB
             else:
-                print("No new pictures.", flush=True)
+                print("\tNo new pictures.", flush=True)
                 unmountLocal(args.fake) #unmount local
 
             filesBefore = filesAfter
