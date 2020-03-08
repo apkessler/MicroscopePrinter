@@ -47,7 +47,7 @@ def mountUSB(isFake):
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
-    print("\t"+sts)
+    print(sts)
 
 def unmountUSB(isFake):
     """
@@ -59,7 +59,7 @@ def unmountUSB(isFake):
     if (not isFake):
         sts = subprocess.call("sudo modprobe g_mass_storage -r", shell=True)
     
-    print("\t"+sts)
+    print(sts)
 
 def mountLocal(isFake):
     """
@@ -71,7 +71,7 @@ def mountLocal(isFake):
     if (not isFake):
         sts = subprocess.call("sudo mount -a", shell=True)
   #  sts = subprocess.call("sudo mount -t vfat /piusb.bin /mnt/usb_share -r")
-    print("\t"+sts)    
+    print(sts)    
 
 
 
@@ -83,7 +83,7 @@ def unmountLocal(isFake):
     sts = "(fake)"
     if (not isFake):
         sts = subprocess.call("umount /mnt/usb_share", shell=True)
-    print("\t"+sts)
+    print(sts)
  
 def main():
 
