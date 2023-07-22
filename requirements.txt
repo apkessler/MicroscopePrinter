@@ -1,0 +1,4 @@
+pycups
+loguru
+argparse
+systemd-python

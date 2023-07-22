@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#This script should install everything on the Pi.
-
+#This script should configure the local WiFi AP.
+# Andrew Kessler 2023
 #set -xeo
 
 echo "Starting provisioning script."
@@ -16,13 +16,9 @@ SUBNET=4
 MIN_ADDR=2
 MAX_ADDR=20
 
-DHCPCD_CONF_FILE=dhcpcd.conf
-DNSMASQ_CONF_FILE=dnsmasq.conf
-HOSTAPD_CONF_FILE=hostapd.conf
-
-# DHCPCD_CONF_FILE=/etc/dhcpcd.conf
-# DNSMASQ_CONF_FILE=/etc/dnsmasq.conf
-# HOSTAPD_CONF_FILE=/etc/hostapd.conf
+DHCPCD_CONF_FILE=/etc/dhcpcd.conf
+DNSMASQ_CONF_FILE=/etc/dnsmasq.conf
+HOSTAPD_CONF_FILE=/etc/hostapd.conf
 
 #From https://www.raspberrypi.com/documentation/computers/configuration.html#software-install
 #In order to work as an access point, the  Pi needs to have the hostapd

@@ -1,0 +1,18 @@
+[Unit]
+Description=Microscope Printer Service
+After=network.target
+#StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+#WatchdogSec=10
+#User=pi
+WorkingDirectory=/home/pi/Repositories/MicroscopePrinter
+ExecStart=/usr/bin/env python3 /home/pi/Repositories/MicroscopePrinter/microscope_printer.py
+#StandardOutput=
+#StandatdError=inherit
+
+[Install]
+WantedBy=default.target
