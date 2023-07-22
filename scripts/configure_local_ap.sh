@@ -4,7 +4,7 @@
 # Andrew Kessler 2023
 #set -xeo
 
-echo "Starting provisioning script."
+echo "Starting AP provisioning script."
 
 HOSTNAME=$(hostname)
 DEFAULT_CHN=7
@@ -25,11 +25,11 @@ HOSTAPD_CONF_FILE=/etc/hostapd.conf
 #access point software package installed and in order to provide network
 #management services (DNS, DHCP) to wireless clients, the  Pi needs to have the
 #dnsmasq software package installed:
-sudo apt install -y hostapd dnsmasq
+apt install -y hostapd dnsmasq
 
 # #Enable the wireless access point service and set it to start when your Raspberry Pi boots:
-sudo systemctl unmask hostapd
-sudo systemctl enable hostapd
+systemctl unmask hostapd
+systemctl enable hostapd
 
 echo "Please enter name (SSID) you want for local WiFi (default will be $HOSTNAME): "
 read ssid

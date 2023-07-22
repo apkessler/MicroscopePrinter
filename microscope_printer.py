@@ -13,6 +13,7 @@ from loguru import logger
 
 
 WATCH_DIR = "/mnt/usb_share/EVOS"
+BINARY_FILE = "/piusb.bin"
 
 def get_file_list(path:str):
     return dict ([(f, None) for f in os.listdir (path)])
@@ -49,7 +50,7 @@ def mount_USB(is_fake:bool):
     logger.info("Mounting USB side")
 
     if (not is_fake):
-        subprocess.call("sudo modprobe g_mass_storage file=/piusb.bin stall=0 ro=0 removeable=1", shell=True)
+        subprocess.call(f"sudo modprobe g_mass_storage file={BINARY_FILE} stall=0 ro=0 removeable=1", shell=True)
 
 
 def unmount_USB(is_fake:bool):
@@ -100,20 +101,27 @@ def main():
 
     #Try to connect to printer, and clear out print queue
     conn = cups.Connection()
-    printers = conn.getPrinters()
-    if (len(printers) == 0):
-        logger.error("No printers found!")
+
+    max_attempts = 5
+    found_printer = False
+    for attempt in range(max_attempts):
+        logger.info(f"Printer attempt {attempt + 1}/{max_attempts}")
+        printers = conn.getPrinters()
+        if (len(printers) == 0):
+            logger.error("No printers found!")
+
+        else:
+            for prntr in printers:
+                logger.success(f"Found printer: {prntr}!")
+                found_printer = True
+                break
+
+        time.sleep(3)
+
+    if not found_printer:
+        logger.error("Unable to find a printer!")
         sys.exit(1)
-    else:
-        for prntr in printers:
-            print("Found %s" % prntr, flush=True)
-        #TODO: explicitly select first?
 
-    if (args.test):
-        print_picture(args.test)
-        sys.exit()
-
-    #For now, just move forward with default
     logger.info("Clearing print queue...")
     subprocess.call("cancel -a", shell=True)
 
