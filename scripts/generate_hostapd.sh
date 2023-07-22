@@ -1,19 +1,16 @@
 #!/bin/bash
 
-if [ $# -lt 2 ]; then
-    echo "Usage: $0 SSID PASSWORD"
+if [ $# -lt 3 ]; then
+    echo "Usage: $0 SSID PASSWORD CHN"
     exit 1
 fi
-
-SSID_NAME=$1
-SSID_PASSWORD=$2
 
 cat <<EOF
 country_code=US
 interface=wlan0
 ssid=$1
 hw_mode=g
-channel=7
+channel=$3
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0
