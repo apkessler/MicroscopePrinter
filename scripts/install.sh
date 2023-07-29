@@ -1,16 +1,22 @@
 #!/bin/bash
-
 # Top level install script
-#run with sudo
+
+#Confirm actually being run as root
+if [ "$(id -u)" -ne 0 ]; then
+    echo 'This script must be run as root! Did you forget sudo?' >&2
+    exit 1
+fi
+
+set -xeo
+
 BINARY_FILE=/piusb.bin
 MOUNT_DIR=/mnt/usb_share
 
+apt update
 apt install -y cups hostapd dnsmasq python3-pip
 
 #Make user pi part of the lpadmin group, so it can manage print jobs
 usermod -a -G lpadmin pi
-
-## TODO: Install printer drivers???
 
 pip install -r requirements.txt
 

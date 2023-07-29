@@ -1,0 +1,6 @@
+#Microscope printer config file
+local_mount_dir: "/mnt/usb_share"
+watch_dir: "/mnt/usb_share/EVOS"
+binary_file: "/piusb.bin"
+simulate: false
+check_interval_sec: 5

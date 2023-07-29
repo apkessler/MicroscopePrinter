@@ -2,3 +2,4 @@ pycups
 loguru
 argparse
 systemd-python
+pyyaml
