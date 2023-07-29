@@ -19,7 +19,8 @@ def get_file_list(path: str):
 class PrinterHelper:
     def __init__(self):
         pass
-    def find_printers(self, max_attempts: int = 5, holdoff_sec: float = 3) -> bool:
+
+    def find_printer(self, max_attempts: int = 5, holdoff_sec: float = 3) -> bool:
         """Try to find a printer
 
         Parameters
@@ -53,7 +54,7 @@ class PrinterHelper:
 
         return found_printer
 
-    def print_picture(self,filename: str):
+    def print_picture(self, filename: str):
         """
         Send the given filename to the printer to print.
         """
