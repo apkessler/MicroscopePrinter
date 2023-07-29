@@ -3,3 +3,4 @@ loguru
 argparse
 systemd-python
 pyyaml
+pytest

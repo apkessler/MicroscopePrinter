@@ -13,12 +13,12 @@ BINARY_FILE=/piusb.bin
 MOUNT_DIR=/mnt/usb_share
 
 apt update
-apt install -y cups hostapd dnsmasq python3-pip
+apt install -y cups hostapd dnsmasq python3-pip gcc libcups2-dev
 
 #Make user pi part of the lpadmin group, so it can manage print jobs
 usermod -a -G lpadmin pi
 
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 
 ## https://magpi.raspberrypi.com/articles/pi-zero-w-smart-usb-flash-drive
 #Enable USB driver. This will keep appending if rerun..
