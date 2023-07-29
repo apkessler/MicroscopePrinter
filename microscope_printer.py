@@ -37,7 +37,6 @@ class PrinterHelper:
         """
         conn = cups.Connection()
 
-        found_printer = False
         for attempt in range(max_attempts):
             logger.info(f"Printer attempt {attempt + 1}/{max_attempts}")
             printers = conn.getPrinters()
@@ -47,12 +46,12 @@ class PrinterHelper:
             else:
                 for prntr in printers:
                     logger.success(f"Found printer: {prntr}!")
-                    found_printer = True
-                    break
+                    return True
+
 
             time.sleep(holdoff_sec)
 
-        return found_printer
+        return False
 
     def print_picture(self, filename: str):
         """
