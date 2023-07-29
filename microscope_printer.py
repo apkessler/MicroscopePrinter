@@ -17,7 +17,9 @@ def get_file_list(path: str):
 
 
 class PrinterHelper:
-    def find_printer(max_attempts: int = 5, holdoff_sec: float = 3) -> bool:
+    def __init__(self):
+        pass
+    def find_printers(self, max_attempts: int = 5, holdoff_sec: float = 3) -> bool:
         """Try to find a printer
 
         Parameters
@@ -51,7 +53,7 @@ class PrinterHelper:
 
         return found_printer
 
-    def print_picture(filename: str):
+    def print_picture(self,filename: str):
         """
         Send the given filename to the printer to print.
         """
@@ -171,7 +173,8 @@ def main():
 
     # Try to connect to printer, and clear out print queue
 
-    printer_found = PrinterHelper().find_printer()
+    ph = PrinterHelper()
+    printer_found = ph.find_printer()
     if not printer_found:
         logger.error("Unable to find a printer!")
         sys.exit(1)
@@ -204,7 +207,7 @@ def main():
         if len(addedFiles) >= 1:
             vfd.unmount_USB()
             logger.debug(f"Going to try to print {addedFiles[0]}")
-            PrinterHelper().print_picture(os.path.join(vfd.watch_dir, addedFiles[0]))
+            ph.print_picture(os.path.join(vfd.watch_dir, addedFiles[0]))
 
             vfd.unmount_local()  # unmount local
             vfd.mount_USB()  # mount USB
