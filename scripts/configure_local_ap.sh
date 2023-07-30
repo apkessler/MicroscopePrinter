@@ -2,7 +2,12 @@
 
 #This script should configure the local WiFi AP.
 # Andrew Kessler 2023
-#set -xeo
+
+#Confirm actually being run as root
+if [ "$(id -u)" -ne 0 ]; then
+    echo 'This script must be run as root! Did you forget sudo?' >&2
+    exit 1
+fi
 
 echo "Starting AP provisioning script."
 
