@@ -48,7 +48,6 @@ class PrinterHelper:
                     logger.success(f"Found printer: {prntr}!")
                     return True
 
-
             time.sleep(holdoff_sec)
 
         return False
@@ -184,6 +183,7 @@ def main():
 
     # TODO: Mount locally, and clear out EVOS folder, then unmount
     vfd.mount_local()
+    os.makedirs(vfd.watch_dir, exist_ok=True)
     logger.info("Removing all existing images")
     if not config_data["simulate"]:
         subprocess.call(f"rm {vfd.watch_dir}/*.jpg", shell=True)
