@@ -97,7 +97,7 @@ address=/gw.wlan/192.168.$SUBNET.1
 EOF
 
 ## Configure the AP Software
-./generate_hostapd.sh $ssid $password $chn >$HOSTAPD_CONF_FILE
+bash generate_hostapd.sh $ssid $password $chn >$HOSTAPD_CONF_FILE
 
 #Need this?
 #Finally, install netfilter-persistent and its plugin iptables-persistent. This utility helps by saving firewall rules and restoring them when the Raspberry Pi boots:
