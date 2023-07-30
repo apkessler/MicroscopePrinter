@@ -187,12 +187,12 @@ def main():
     logger.info("Removing all existing images")
     if not config_data["simulate"]:
         subprocess.call(f"rm {vfd.watch_dir}/*.jpg", shell=True)
+    files_before = vfd.get_local_files()
     vfd.unmount_local()
 
     # Now mount the USB side of the system so flash drive appears to scope
     vfd.mount_USB()
 
-    files_before = vfd.get_local_files()
 
     while 1:
         logger.debug("Waking up!")
