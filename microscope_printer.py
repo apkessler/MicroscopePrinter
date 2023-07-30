@@ -183,7 +183,7 @@ def main():
 
     vfd.unmount_USB() #Make sure USB is unmounted, otherwise it won't mount again
 
-    # TODO: Mount locally, and clear out EVOS folder, then unmount
+    # Mount locally, and clear out EVOS folder, then unmount
     vfd.mount_local()
     os.makedirs(vfd.watch_dir, exist_ok=True)
     logger.info("Removing all existing images")

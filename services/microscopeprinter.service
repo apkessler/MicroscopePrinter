@@ -10,7 +10,7 @@ RestartSec=5
 #WatchdogSec=10
 #User=pi
 WorkingDirectory=/home/pi/Repositories/MicroscopePrinter
-ExecStart=/usr/bin/env python3 /home/pi/Repositories/MicroscopePrinter/microscope_printer.py config.yaml
+ExecStart=/usr/bin/env python3 /home/pi/Repositories/MicroscopePrinter/microscope_printer.py /home/pi/Repositories/MicroscopePrinter/config.yaml
 #StandardOutput=
 #StandatdError=inherit
 
