@@ -1,5 +1,6 @@
 #!/bin/bash
 # Top level install script
+# Run from ./scripts
 
 #Confirm actually being run as root
 if [ "$(id -u)" -ne 0 ]; then
