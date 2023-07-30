@@ -16,6 +16,9 @@ apt install -y cups hostapd dnsmasq python3-pip gcc libcups2-dev
 #Make user pi part of the lpadmin group, so it can manage print jobs
 usermod -a -G lpadmin pi
 
+cp ../HelpfulFiles/cupsd.conf /etc/cups/
+systemctl restart cups
+
 pip3 install -r requirements.txt
 
 ./setup_virtual_flash_drive.sh /piusb.bin /mnt/usb_share 2048
