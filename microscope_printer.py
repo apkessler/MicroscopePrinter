@@ -181,6 +181,8 @@ def main():
     logger.info("Clearing print queue...")
     subprocess.call("cancel -a", shell=True)
 
+    vfd.unmount_USB() #Make sure USB is unmounted, otherwise it won't mount again
+
     # TODO: Mount locally, and clear out EVOS folder, then unmount
     vfd.mount_local()
     os.makedirs(vfd.watch_dir, exist_ok=True)
