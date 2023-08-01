@@ -23,7 +23,7 @@ MAX_ADDR=20
 
 DHCPCD_CONF_FILE=/etc/dhcpcd.conf
 DNSMASQ_CONF_FILE=/etc/dnsmasq.conf
-HOSTAPD_CONF_FILE=/etc/hostapd.conf
+HOSTAPD_CONF_FILE=/etc/hotsapd/hostapd.conf
 
 #From https://www.raspberrypi.com/documentation/computers/configuration.html#software-install
 #In order to work as an access point, the  Pi needs to have the hostapd
@@ -95,6 +95,8 @@ domain=wlan     # Local wireless DNS domain
 address=/gw.wlan/192.168.$SUBNET.1
                 # Alias for this router
 EOF
+
+rfkill unblock wlan0
 
 ## Configure the AP Software
 bash generate_hostapd.sh $ssid $password $chn >$HOSTAPD_CONF_FILE
