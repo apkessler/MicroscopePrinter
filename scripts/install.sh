@@ -19,7 +19,7 @@ usermod -a -G lpadmin pi
 cp ../HelpfulFiles/cupsd.conf /etc/cups/
 systemctl restart cups
 
-pip3 install -r requirements.txt
+pip3 install -r ../requirements.txt
 
 ./setup_virtual_flash_drive.sh /piusb.bin /mnt/usb_share 2048
 
