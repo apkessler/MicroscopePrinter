@@ -23,7 +23,7 @@ MAX_ADDR=20
 
 DHCPCD_CONF_FILE=/etc/dhcpcd.conf
 DNSMASQ_CONF_FILE=/etc/dnsmasq.conf
-HOSTAPD_CONF_FILE=/etc/hotsapd/hostapd.conf
+HOSTAPD_CONF_FILE=/etc/hostapd/hostapd.conf
 
 #From https://www.raspberrypi.com/documentation/computers/configuration.html#software-install
 #In order to work as an access point, the  Pi needs to have the hostapd
