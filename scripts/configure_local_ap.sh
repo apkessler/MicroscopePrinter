@@ -96,7 +96,7 @@ address=/gw.wlan/192.168.$SUBNET.1
                 # Alias for this router
 EOF
 
-rfkill unblock wlan0
+rfkill unblock wlan
 
 ## Configure the AP Software
 bash generate_hostapd.sh $ssid $password $chn >$HOSTAPD_CONF_FILE
