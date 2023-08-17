@@ -10,6 +10,7 @@ import subprocess
 import cups
 from loguru import logger
 import yaml
+from PIL import Image
 
 
 def get_file_list(path: str):
@@ -181,7 +182,7 @@ def main():
     logger.info("Clearing print queue...")
     subprocess.call("cancel -a", shell=True)
 
-    vfd.unmount_USB() #Make sure USB is unmounted, otherwise it won't mount again
+    vfd.unmount_USB()  # Make sure USB is unmounted, otherwise it won't mount again
 
     # Mount locally, and clear out EVOS folder, then unmount
     vfd.mount_local()
@@ -195,7 +196,6 @@ def main():
     # Now mount the USB side of the system so flash drive appears to scope
     vfd.mount_USB()
 
-
     while 1:
         logger.debug("Waking up!")
         vfd.mount_local()
@@ -208,8 +208,21 @@ def main():
         # Only print the first picture in new list, to avoid spamming
         if len(addedFiles) >= 1:
             vfd.unmount_USB()
-            logger.debug(f"Going to try to print {addedFiles[0]}")
-            ph.print_picture(os.path.join(vfd.watch_dir, addedFiles[0]))
+            target_file = os.path.join(vfd.watch_dir, addedFiles[0])
+            logger.debug(f"Going to try to print {target_file}")
+
+            # See if there's an overlay image present
+            if os.path.exists(config_data["overlay_file"]):
+                logger.info("Found an overlay file!")
+                superimpose_images(
+                    target_file,
+                    config_data["overlay_file"],
+                    target_file, #Put file back over itself
+                )
+            else:
+                logger.debug("No overlay file found")
+
+            ph.print_picture(target_file)
 
             vfd.unmount_local()  # unmount local
             vfd.mount_USB()  # mount USB
@@ -220,6 +233,35 @@ def main():
         files_before = files_after
 
         time.sleep(config_data["check_interval_sec"])
+
+
+def superimpose_images(base_fp: str, overlay_fp: str, output_fp: str):
+    """Put overlay_fp on top of base_fp, and save to output_fp
+
+    Parameters
+    ----------
+    base_fp : str
+        Location of base image
+    overlay_fp : str
+        Location of overlay image
+    output_fp : str
+        Location of new output file
+    """
+
+    # Opening the primary image (used in background)
+    base_img = Image.open(base_fp)
+
+    # Opening the secondary image (overlay image)
+    overlay_img = Image.open(overlay_fp)
+
+    # Pasting overlay_img image on top of base_img
+    # starting at coordinates (0, 0)
+    base_img.paste(overlay_img, (0, 0), mask=overlay_img)
+
+    base_img.save(output_fp)
+
+    base_img.close()
+    overlay_img.close()
 
 
 def test_get_new_files():

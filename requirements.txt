@@ -4,3 +4,4 @@ argparse
 systemd-python
 pyyaml
 pytest
+Pillow

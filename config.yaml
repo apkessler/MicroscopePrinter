@@ -3,5 +3,6 @@
 local_mount_dir: "/mnt/usb_share"
 watch_dir: "/mnt/usb_share/EVOS"
 binary_file: "/piusb.bin"
+overlay_file: "/mnt/usb_share/overlay.png"
 simulate: false
 check_interval_sec: 5
