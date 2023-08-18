@@ -33,6 +33,4 @@ network={
 }
 EOF
 
-echo "Rebooting in 5sec. If you screwed up, press Ctrl-c and retry. Otherwise, wait for reboot."
-sleep 5
-reboot
+echo "Reboot for changes to take effect."
