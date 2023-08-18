@@ -36,6 +36,9 @@ apt install -y hostapd dnsmasq
 systemctl unmask hostapd
 systemctl enable hostapd
 
+systemctl unmask dnsmasq
+systemctl enable dnsmasq
+
 echo "Please enter name (SSID) you want for local WiFi (default will be $HOSTNAME): "
 read ssid
 ssid=${ssid:-$HOSTNAME}
@@ -95,8 +98,6 @@ domain=wlan     # Local wireless DNS domain
 address=/gw.wlan/192.168.$SUBNET.1
                 # Alias for this router
 EOF
-
-rfkill unblock wlan
 
 ## Configure the AP Software
 bash generate_hostapd.sh $ssid $password $chn >$HOSTAPD_CONF_FILE
