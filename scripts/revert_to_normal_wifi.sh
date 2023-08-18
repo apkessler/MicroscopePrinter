@@ -8,11 +8,6 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-set -xeo
-
-systemctl disable hostapd dnsmasq
-cp /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
-
 echo "Please enter name (SSID) of WiFi network you want to connect to: "
 read ssid
 echo "Ok, will look for SSID $ssid."
@@ -21,6 +16,10 @@ echo "Please enter password for WiFi network ($ssid): "
 read password
 echo "OK, the password will be $password."
 
+systemctl disable hostapd dnsmasq
+cp /etc/dhcpcd.conf.orig /etc/dhcpcd.conf
+
+mv /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.orig
 #Create a wpa_supplicant.conf...
 cat <<EOF >>/etc/wpa_supplicant/wpa_supplicant.conf
 country=US
