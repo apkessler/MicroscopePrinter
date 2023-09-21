@@ -258,6 +258,9 @@ def superimpose_images(base_fp: str, overlay_fp: str, output_fp: str):
     # starting at coordinates (0, 0)
     base_img.paste(overlay_img, (0, 0), mask=overlay_img)
 
+    #Crop base image to size of overlay image
+    base_img.crop((0,0,overlay_img.size[0], overlay_img.size[1]))
+
     base_img.save(output_fp)
 
     base_img.close()
