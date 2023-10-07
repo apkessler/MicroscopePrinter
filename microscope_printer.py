@@ -149,7 +149,6 @@ def get_new_files(files_before: list, files_after: list) -> list:
 
 
 def main():
-
     if sys.version_info[0] < 3:
         raise Exception("Must be using Python 3!")
 
@@ -217,7 +216,7 @@ def main():
                 superimpose_images(
                     target_file,
                     config_data["overlay_file"],
-                    target_file, #Put file back over itself
+                    target_file,  # Put file back over itself
                 )
             else:
                 logger.debug("No overlay file found")
@@ -237,6 +236,8 @@ def main():
 
 def superimpose_images(base_fp: str, overlay_fp: str, output_fp: str):
     """Put overlay_fp on top of base_fp, and save to output_fp
+    Overlay is placed centered on the original image, and
+    final image is cropped to size of overlay.
 
     Parameters
     ----------
@@ -254,26 +255,48 @@ def superimpose_images(base_fp: str, overlay_fp: str, output_fp: str):
     # Opening the secondary image (overlay image)
     overlay_img = Image.open(overlay_fp)
 
-    # Pasting overlay_img image on top of base_img
-    # starting at coordinates (0, 0)
-    base_img.paste(overlay_img, (0, 0), mask=overlay_img)
+    ovr_w, ovr_h = overlay_img.size
+    # Crop the base image to the size of the overlay image, but centered before
+    # doign the overlay
+    base_cropped = crop_centered(base_img, ovr_w, ovr_h)
 
-    #Crop base image to size of overlay image
-    base_img.crop((0,0,overlay_img.size[0], overlay_img.size[1]))
+    # Pasting overlay_img image on top of base_img (at top left corner)
+    # (makes it easier to not have to figure out how to center the overlay)
+    base_cropped.paste(overlay_img, (0, 0), mask=overlay_img)
 
-    base_img.save(output_fp)
+    base_cropped.save(output_fp)
 
-    base_img.close()
     overlay_img.close()
+    base_img.close()
+    base_cropped.close()
+
+
+def crop_centered(im: Image, new_width: int, new_height: int) -> Image:
+    old_width, old_height = im.size  # Get current dimensions
+
+    left_edge = (old_width - new_width) / 2
+    top_edge = (old_height - new_height) / 2
+    right_edge = (old_width + new_width) / 2
+    bottom_edge = (old_height + new_height) / 2
+
+    # Crop the center of the image
+    return im.crop((left_edge, top_edge, right_edge, bottom_edge))
 
 
 def test_get_new_files():
-
     assert ["a"] == get_new_files([], ["a"])
     assert ["a", "b"] == get_new_files([], ["a", "b"])
     assert [] == get_new_files(["a", "b"], ["a", "b"])
     assert ["c"] == get_new_files(["a", "b"], ["a", "b", "c"])
     assert ["c"] == get_new_files(["a", "b"], ["c"])
+
+
+def test_crop_centered():
+    im = Image.new("RGB", (1024, 800))
+
+    im2 = crop_centered(im, 512, 400)
+
+    assert im2.size == (512, 400)
 
 
 if __name__ == "__main__":
